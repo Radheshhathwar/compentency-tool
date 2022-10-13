@@ -48,7 +48,7 @@ public class Controller {
    }	
 	
 	@PutMapping("/user/{id}")
-	public ResponseEntity<User> updateTutorial(@PathVariable("id") long id, @RequestBody User user) {
+	public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
 		Optional<User> userData = userRepository.findById(id);
 
 		if (userData.isPresent()) {
@@ -63,7 +63,7 @@ public class Controller {
 	}
 	
 	@DeleteMapping("/user/{id}")
-	public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") long id) {
+	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") long id) {
 		try {
 			userRepository.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
