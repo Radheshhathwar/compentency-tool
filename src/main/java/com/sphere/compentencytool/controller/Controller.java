@@ -1,7 +1,6 @@
 package com.sphere.compentencytool.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,61 +14,142 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sphere.compentencytool.model.User;
-import com.sphere.compentencytool.repository.UserRepository;
-
-
+import com.sphere.compentencytool.exception.ResourceNotFoundException;
+import com.sphere.compentencytool.model.Designations;
+import com.sphere.compentencytool.model.Roles;
+import com.sphere.compentencytool.repository.DesignationsRepository;
+import com.sphere.compentencytool.repository.RolesRepository;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/compentencytool/v1")
 public class Controller {
 	
 	@Autowired
-	UserRepository userRepository;
+	DesignationsRepository designationsRepository;
+	@Autowired
+	RolesRepository rolesRepository;
 	
 	
-	@GetMapping("test")
-	public String Test(){
-		
-		return "Api working ";	
-	}
-		
-	@GetMapping("user")
-	public List<User> getAllUser(){
-		return this.userRepository.findAll();
-	}
+	// DESIGNATION API's
 	
-	
-	@PostMapping(value = "/user", produces = "application/json")
-   public User createUser(@RequestBody User user) {
-		System.out.println("user api rquest :"+user);
-	return this.userRepository.save(user);
+   // 1. Insert designations
+   @PostMapping(value = "/designations", produces = "application/json")
+   public Designations Add_Designations(@RequestBody Designations designations) {
+	return this.designationsRepository.save(designations);
    }	
 	
-	@PutMapping("/user/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
-		Optional<User> userData = userRepository.findById(id);
-
-		if (userData.isPresent()) {
-			User _user = userData.get();
-			_user.setName(user.getName());
-			_user.setEmail(user.getEmail());
-			_user.setPhone_num(user.getPhone_num());
-			return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+   // 2. Get All designations
+   @GetMapping("/designations")
+	public List<Designations> getAllDesignations(){
+		return this.designationsRepository.findAll();
 	}
-	
-	@DeleteMapping("/user/{id}")
-	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") long id) {
+// 3. Get designations by id
+   @GetMapping("/designations/{id}")
+	public ResponseEntity<Designations> getDesignationsById(@PathVariable(value = "id") Long designationsId)
+			throws ResourceNotFoundException {
+	   Designations designations = designationsRepository.findById(designationsId)
+				.orElseThrow(() -> new ResourceNotFoundException("designations not found for this id :: " + designationsId));
+		return ResponseEntity.ok().body(designations);
+	}
+   
+   
+// 4. Update designations by id
+   @PutMapping("/designations/{id}")
+	public ResponseEntity<Designations> UpdateDesignations(@PathVariable(value = "id") Long designation_id,
+			@RequestBody Designations designationDetails) throws ResourceNotFoundException {
+	   Designations _design = designationsRepository.findById(designation_id)
+				.orElseThrow(() -> new ResourceNotFoundException("designations not found for this id :: " + designation_id));
+
+	   _design.setDesignation_id(designationDetails.getDesignation_id());
+		_design.setDesignation_name(designationDetails.getDesignation_name());
+		_design.setDesignation_description(designationDetails.getDesignation_description());
+		_design.setStatus(designationDetails.getStatus());
+		_design.setCreatedon(designationDetails.getCreatedon());
+		_design.setCreatedby(designationDetails.getCreatedby());
+		final Designations updated_designationDetails = designationsRepository.save(_design);
+		return ResponseEntity.ok(updated_designationDetails);
+	}
+   
+// 5. delete designations by id
+   @DeleteMapping("/designations/{id}")
+	public ResponseEntity<HttpStatus> DeleteDesignations(@PathVariable("id") long id) {
 		try {
-			userRepository.deleteById(id);
+			designationsRepository.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+   
+   
+      //ROLE API's
+   
+   
+// 1. Insert roles
+   @PostMapping(value = "/roles", produces = "application/json")
+   public Roles Add_roles(@RequestBody Roles roles) {
+	return this.rolesRepository.save(roles);
+   }
+   
+// 2. Get All roles
+   @GetMapping("/roles")
+	public List<Roles> getAllRoles(){
+		return this.rolesRepository.findAll();
+	}
+   
+// 3. Get roles by id
+   @GetMapping("/roles/{id}")
+	public ResponseEntity<Roles> getrolesById(@PathVariable(value = "id") Long roleId)
+			throws ResourceNotFoundException {
+	   Roles roles = rolesRepository.findById(roleId)
+				.orElseThrow(() -> new ResourceNotFoundException("Roles not found for this id :: " + roleId));
+		return ResponseEntity.ok().body(roles);
+	}
+   
+   
+// 4. Update roles by id
+   @PutMapping("/roles/{id}")
+	public ResponseEntity<Roles> UpdateRoles(@PathVariable(value = "id") Long role_id,
+			@RequestBody Roles roleDetails) throws ResourceNotFoundException {
+	   Roles _roles = rolesRepository.findById(role_id)
+				.orElseThrow(() -> new ResourceNotFoundException("Roles not found for this id :: " + role_id));
+
+	   _roles.setRole_id(roleDetails.getRole_id());
+	   _roles.setRole_name(roleDetails.getRole_name());
+	   _roles.setRole_description(roleDetails.getRole_description());
+	   _roles.setStatus(roleDetails.getStatus());
+	   _roles.setCreatedon(roleDetails.getCreatedon());
+	   _roles.setCreatedby(roleDetails.getCreatedby());
+		final Roles updated_rolesDetails = rolesRepository.save(_roles);
+		return ResponseEntity.ok(updated_rolesDetails);
+	}
+   
+// 5. delete role by id
+   @DeleteMapping("/roles/{id}")
+	public ResponseEntity<HttpStatus> DeleteRole(@PathVariable("id") long id) {
+			try {
+				rolesRepository.deleteById(id);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+   
+   
+   
+    // ROLE-DESIGNATION-MAPPING API's
+   
+   
+   
+   
+   
+	@GetMapping("/designations/test")
+	public String Test(){
+		
+		return "Api working ";	
+	}
+		
+
 }	
 
