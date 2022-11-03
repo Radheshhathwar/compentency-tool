@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sphere.compentencytool.exception.ResourceNotFoundException;
+import com.sphere.compentencytool.model.Activities;
 import com.sphere.compentencytool.model.Designations;
 import com.sphere.compentencytool.model.Roles;
+import com.sphere.compentencytool.repository.ActivitiesRepository;
 import com.sphere.compentencytool.repository.DesignationsRepository;
 import com.sphere.compentencytool.repository.RolesRepository;
 
@@ -29,6 +31,8 @@ public class Controller {
 	DesignationsRepository designationsRepository;
 	@Autowired
 	RolesRepository rolesRepository;
+	@Autowired
+	ActivitiesRepository activitiesRepository;
 	
 	
 	// DESIGNATION API's
@@ -136,8 +140,57 @@ public class Controller {
 		}
 	}
    
+   //Activity Controller operations
+   //1. Insert activities
+   @PostMapping(value = "/activities", produces = "application/json")
+   public Activities Add_activities(@RequestBody Activities activities) {
+	   System.out.println(activities);
+	return this.activitiesRepository.save(activities);
+	
+   }
    
+   //2. Get All activities
+   @GetMapping("/activities")
+	public List<Activities> getAllActivities(){
+		return this.activitiesRepository.findAll();
+	}
    
+  // 3. Get activities by id
+   @GetMapping("/activities/{id}")
+	public ResponseEntity<Activities> getActivitiesById(@PathVariable(value = "id") Long activity_id)
+			throws ResourceNotFoundException {
+	   Activities activities = activitiesRepository.findById(activity_id)
+				.orElseThrow(() -> new ResourceNotFoundException("Activities not found for this id :: " + activity_id));
+		return ResponseEntity.ok().body(activities);
+	}
+   
+   //4. Update activities by id
+   @PutMapping("/activities/{id}")
+	public ResponseEntity<Activities> UpdateActivities(@PathVariable(value = "id") Long activity_id,
+			@RequestBody Activities activityDetails) throws ResourceNotFoundException {
+	   Activities _activities = activitiesRepository.findById(activity_id)
+				.orElseThrow(() -> new ResourceNotFoundException("Activities not found for this id :: " + activity_id));
+
+	   _activities.setActivity_id(activityDetails.getActivity_id());
+	   _activities.setActivity_name(activityDetails.getActivity_name());
+	   _activities.setActivity_description(activityDetails.getActivity_description());
+	   _activities.setStatus(activityDetails.getStatus());
+	   _activities.setCreatedon(activityDetails.getCreatedon());
+	   _activities.setCreatedby(activityDetails.getCreatedby());
+		final Activities updated_activitiesDetails = activitiesRepository.save(_activities);
+		return ResponseEntity.ok(updated_activitiesDetails);
+	}
+   
+  // 5. delete activity by id
+   @DeleteMapping("/activities/{id}")
+	public ResponseEntity<HttpStatus> DeleteActivity(@PathVariable("id") long id) {
+			try {
+				activitiesRepository.deleteById(id);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+   }
     // ROLE-DESIGNATION-MAPPING API's
    
    
