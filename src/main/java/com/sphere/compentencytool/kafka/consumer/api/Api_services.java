@@ -2,6 +2,7 @@ package com.sphere.compentencytool.kafka.consumer.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sphere.compentencytool.common.utils.propertiesCache;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
@@ -19,12 +20,13 @@ import java.util.ResourceBundle;
 public class Api_services {
     RestTemplate restTemplate = new RestTemplate();
 
-    ResourceBundle props = ResourceBundle.getBundle("application");
+//    ResourceBundle props = ResourceBundle.getBundle("application");
+    propertiesCache env=new propertiesCache();
     public Object get_hierarchy(String courseId, JSONArray UserId) {
-        String url = props.getString("get.hierarchy")+courseId+"?hierarchyType=detail";
-//        String url =  props.getString("get.hierarchy")+ courseId + "?mode=edit";
+//      String url = "https://aastrika-stage.tarento.com/api/private/content/v3/hierarchy/"+courseId+"?hierarchyType=detail";
+        String url = env.getProperty("get.hierarchy")+ courseId + "?mode=edit";
         System.out.println(url);
-        String Api_key = props.getString("Api.key");
+        String Api_key = env.getProperty("Api.key");
         System.out.println(Api_key);
         HttpHeaders header = new HttpHeaders();
         header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -132,8 +134,8 @@ public class Api_services {
         restTemplate.setRequestFactory(requestFactory);
 
         String request_body = request.toString();
-        String url = props.getString("passbook.update.url");
-        String Api_key = props.getString("Api.key");
+        String url = env.getProperty("passbook.update.url");
+        String Api_key =env.getProperty("Api.key");
         HttpHeaders header = new HttpHeaders();
         header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         header.add("Authorization", Api_key);
@@ -156,7 +158,7 @@ public class Api_services {
     }
 
     private JSONObject get_entityById(String competency_id) throws JsonProcessingException {
-        String url = props.getString("get.entityById") + competency_id;
+        String url = env.getProperty("get.entityById") + competency_id;
         System.out.println("get_entityById fun ");
         HttpHeaders header = new HttpHeaders();
         header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

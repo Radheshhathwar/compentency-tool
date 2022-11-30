@@ -1,6 +1,13 @@
 package com.sphere.compentencytool.constants;
 
-public class Constants {
+import com.sphere.compentencytool.common.utils.AppProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-	private static final String NAME = "";
+@Service
+public class Constants {
+	@Autowired
+	AppProperties props;
+
+
 }

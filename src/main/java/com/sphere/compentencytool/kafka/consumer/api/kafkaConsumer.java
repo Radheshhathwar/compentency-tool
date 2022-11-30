@@ -1,6 +1,7 @@
 package com.sphere.compentencytool.kafka.consumer.api;
 
 import com.sphere.compentencytool.common.utils.AppProperties;
+import com.sphere.compentencytool.common.utils.propertiesCache;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -26,13 +28,15 @@ public class kafkaConsumer {
 
     public static void main(String[] args) {
         SpringApplication.run(kafkaConsumer.class, args);
+
+        propertiesCache env=new propertiesCache();
+
         Api_services api_services= new Api_services();
-        ResourceBundle rd = ResourceBundle.getBundle("application");
         Logger logger= LoggerFactory.getLogger(kafkaConsumer.class.getName());
 
-        String bootstrapServers=rd.getString("kafka.bootstrapServers");
-        String grp_id=rd.getString("kafka.groupID");
-        String topic= rd.getString("kafka.topic");;
+        String bootstrapServers=env.getProperty("kafka.bootstrapServers");
+        String grp_id=env.getProperty("kafka.groupID");
+        String topic= env.getProperty("kafka.topic");;
          System.out.println("topic  --- > "+topic);
         System.out.println("bootstrapServers  --- > "+bootstrapServers);
         System.out.println("grp_id  --- > "+grp_id);
