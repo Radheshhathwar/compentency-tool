@@ -2,17 +2,13 @@ package com.sphere.compentencytool.controller;
 
 import java.util.List;
 
+import com.sphere.compentencytool.model.GetPassbook;
+import com.sphere.compentencytool.model.Passbook;
+import com.sphere.compentencytool.repository.passbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sphere.compentencytool.exception.ResourceNotFoundException;
 import com.sphere.compentencytool.model.Designations;
@@ -29,6 +25,8 @@ public class Controller {
 	DesignationsRepository designationsRepository;
 	@Autowired
 	RolesRepository rolesRepository;
+	@Autowired
+	passbookRepository PassbookRepository;
 	
 	
 	// DESIGNATION API's
@@ -139,9 +137,31 @@ public class Controller {
    
    
     // ROLE-DESIGNATION-MAPPING API's
-   
-   
-   
+
+	// 1. Insert passbook
+	@PatchMapping(value = "/passbook", produces = "application/json")
+	public Passbook Add_Passbook(@RequestBody Passbook passbook) {
+		System.out.println(passbook);
+	   return this.PassbookRepository.save(passbook);
+	}
+	@PostMapping("/passbook")
+	public List<Passbook> GetPassbook(@RequestBody GetPassbook getpassbook){
+		String TypeName=getpassbook.getRequest().getTypeName();
+		List<String> userId=getpassbook.getRequest().getUserId();
+		System.out.println("Userid = "+userId);
+		List<Passbook> result = null;
+		if (TypeName != null & userId != null) {
+			System.out.println(userId);
+			System.out.println(TypeName);
+			result=  this.PassbookRepository.searchByTypeNameUserId(TypeName,userId);
+		}
+		else if (TypeName != null & userId == null) {
+			result= this.PassbookRepository.searchByTypeName(TypeName);
+		}
+
+
+		return result;
+	}
    
    
 	@GetMapping("/designations/test")
