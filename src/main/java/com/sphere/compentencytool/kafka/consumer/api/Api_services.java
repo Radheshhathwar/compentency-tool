@@ -21,8 +21,8 @@ public class Api_services {
 
     ResourceBundle props = ResourceBundle.getBundle("application");
     public Object get_hierarchy(String courseId, JSONArray UserId) {
-//        String url = "https://aastrika-stage.tarento.com/api/private/content/v3/hierarchy/"+courseId+"?hierarchyType=detail";
-        String url =  props.getString("get.hierarchy")+ courseId + "?mode=edit";
+        String url = props.getString("get.hierarchy")+courseId+"?hierarchyType=detail";
+//        String url =  props.getString("get.hierarchy")+ courseId + "?mode=edit";
         System.out.println(url);
         String Api_key = props.getString("Api.key");
         System.out.println(Api_key);
