@@ -9,6 +9,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,11 +28,14 @@ public class kafkaConsumer {
         SpringApplication.run(kafkaConsumer.class, args);
         Api_services api_services= new Api_services();
         ResourceBundle rd = ResourceBundle.getBundle("application");
-//        Logger logger= LoggerFactory.getLogger(kafkaConsumer.class.getName());
+        Logger logger= LoggerFactory.getLogger(kafkaConsumer.class.getName());
 
         String bootstrapServers=rd.getString("kafka.bootstrapServers");
         String grp_id=rd.getString("kafka.groupID");
         String topic= rd.getString("kafka.topic");;
+         System.out.println("topic  --- > "+topic);
+        System.out.println("bootstrapServers  --- > "+bootstrapServers);
+        System.out.println("grp_id  --- > "+grp_id);
 
         //Creating consumer properties
         Properties properties=new Properties();
@@ -43,6 +48,7 @@ public class kafkaConsumer {
         KafkaConsumer<String,String> consumer= new KafkaConsumer<String,String>(properties);
         //Subscribing
         consumer.subscribe(Arrays.asList(topic));
+        System.out.println("kafka consumer subscribe & running");
         //polling
         while(true){
             ConsumerRecords<String,String> records=consumer.poll(Duration.ofMillis(100));
