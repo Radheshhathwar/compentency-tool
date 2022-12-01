@@ -106,7 +106,7 @@ public class Api_services {
 
                 JSONObject acquiredDetails = new JSONObject();
 
-                acquiredDetails.put("acquiredChannel", "Course");
+                acquiredDetails.put("acquiredChannel", "course");
                 acquiredDetails.put("competencyLevelId", competency_level);
 //                acquiredDetails.put("secondaryPassbookId", (Collection<?>) null);
                 JSONObject acquiredDetails_additionalParams = new JSONObject();
