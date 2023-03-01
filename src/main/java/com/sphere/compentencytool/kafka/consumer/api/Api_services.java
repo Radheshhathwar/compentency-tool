@@ -23,8 +23,8 @@ public class Api_services {
 //    ResourceBundle props = ResourceBundle.getBundle("application");
     propertiesCache env=new propertiesCache();
     public Object get_hierarchy(String courseId, JSONArray UserId) {
-//      String url = "https://aastrika-stage.tarento.com/api/private/content/v3/hierarchy/"+courseId+"?hierarchyType=detail";
-        String url = env.getProperty("get.hierarchy")+ courseId + "?mode=edit";
+//      String url = "https://sphere.aastrika.org/api/private/content/v3/hierarchy/"+courseId+"?hierarchyType=detail";
+        String url = env.getProperty("get.hierarchy")+ courseId + "?hierarchyType=detail";
         System.out.println(url);
         String Api_key = env.getProperty("Api.key");
         System.out.println(Api_key);
@@ -73,7 +73,7 @@ public class Api_services {
                 JSONObject compentency_parse = (JSONObject) competencyData1.get(i);
 
                 // competencies_v1 Info
-                String cmp_id = (String) compentency_parse.get("competencyId");
+                String cmp_id = compentency_parse.get("competencyId").toString();
                 String competencyName = (String) compentency_parse.get("competencyName");
                 String competency_level = String.valueOf(compentency_parse.get("level")) ;
                 System.out.println("cmp_id = " + cmp_id + "competencyName = " + competencyName + "competency_level =" + competency_level);
